@@ -18,7 +18,6 @@ def myunflatten_optimizer(optimize):
         else:
             _callback = None
         return unflatten(optimize(_grad, _x0, gargs, _callback, *args, **kwargs))
-
     return _optimize
 
 
