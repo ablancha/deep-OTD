@@ -33,7 +33,8 @@ if __name__ == '__main__':
     layer_sizes = [ndim,20,ndim]
     step_size = 0.04
     max_iters = 2000
-    wghts_agg = dOTD.train(inputs,layer_sizes,notd,step_size,max_iters)
+    lyap_off = 1000
+    wghts_agg = dOTD.train(inputs,layer_sizes,notd,step_size,max_iters,lyap_off)
 
 ### Test on data from long trajectory
     tTest = t.reshape((len(t),1))

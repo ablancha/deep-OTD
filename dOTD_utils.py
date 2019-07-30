@@ -1,9 +1,47 @@
 import autograd.numpy as np
 import autograd.numpy.random as npr
 from autograd import grad, jacobian
-from autograd.misc.optimizers import myadam, mysgd, myrmsprop
+import autograd.misc.optimizers 
+from autograd.misc import flatten
+from autograd.wrap_util import wraps
 import _pickle as cPickle
 
+
+def myunflatten_optimizer(optimize):
+    """Adapted from Autograd's 'unflatten_optimizer' to account for extra arguments."""
+    @wraps(optimize)
+    def _optimize(grad, x0, gargs, callback=None, *args, **kwargs):
+        _x0, unflatten = flatten(x0)
+        _grad = lambda x, i: flatten(grad(unflatten(x), i, gargs))[0]
+        if callback:
+            _callback = lambda x, i, g: callback(unflatten(x), i, unflatten(g), gargs)
+        else:
+            _callback = None
+        return unflatten(optimize(_grad, _x0, gargs, _callback, *args, **kwargs))
+
+    return _optimize
+
+
+@myunflatten_optimizer
+def myadam(grad, x, gargs, callback=None, num_iters=100,
+         step_size=0.001, b1=0.9, b2=0.999, eps=10**-8, tol=1e-6):
+    """Adapted from Autograd's Adam optimization routine."""
+    m = np.zeros(len(x))
+    v = np.zeros(len(x))
+    for i in range(num_iters):
+        g = grad(x,i)
+        if callback:
+            loss=callback(x, i, g)
+            if loss<tol: break # Break if error less than tol
+        m = (1 - b1) * g      + b1 * m  # First  moment estimate.
+        v = (1 - b2) * (g**2) + b2 * v  # Second moment estimate.
+        mhat = m / (1 - b1**(i + 1))    # Bias correction.
+        vhat = v / (1 - b2**(i + 1))
+    # Add learning rate schedule here, e.g.:
+        #  if i==4000: step_size=step_size*0.5
+        #  if i==5000: step_size=step_size*0.5
+        x = x - step_size*mhat/(np.sqrt(vhat) + eps)
+    return x
 
 
 def init_w(layer_sizes, rs=npr.RandomState( )):
@@ -43,6 +81,7 @@ def loss(wghts,step,gargs):
     """Compute OTD loss function."""
     xM, xdM, LM = gargs[0]
     wghts_agg = gargs[1]
+    lyap_off = gargs[2]
     gargs_batch=gargs
 
     ifbatch = False     # Mini-batching
@@ -51,7 +90,7 @@ def loss(wghts,step,gargs):
       gargs_batch = [ (xM[idx], xdM[idx], LM[idx]), wghts_agg ]
 
     l_pde, l_lya = losses(wghts,step,gargs_batch)
-    if step > 2000: l_lya=0.0  # On/Off switch
+    if step >= lyap_off: l_lya=0.0  # On/Off switch
 
     return l_pde + l_lya
 
@@ -105,13 +144,13 @@ def callback(wghts, step, g, gargs):
     return closs
 
 
-def train(inputs, layer_sizes, notd, step_size, num_iters, saveWeights=True):
+def train(inputs, layer_sizes, notd, step_size, num_iters, lyap_off, saveWeights=True):
     """Run optimization loop."""
     wghts_agg = []
     for kk in range(notd):
         if kk+1 == layer_sizes[0]: num_iters=1  # Do only one iteration if notd=ndim
         wghts = init_w(layer_sizes)
-        gargs = [inputs, wghts_agg]
+        gargs = [inputs, wghts_agg, lyap_off]
         wghts = myadam(grad(loss), wghts, gargs,
                        callback=callback, step_size=step_size, num_iters=num_iters)
         wghts_agg.append(wghts)
