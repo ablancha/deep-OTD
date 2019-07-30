@@ -1,6 +1,6 @@
 # deep-OTD
 
-Source code for data-driven learning of OTD modes used in "Machine Learning the Tangent Space of Dynamical Instabilities from Data" (https://arxiv.org/abs/1907.10413)
+Source code for data-driven learning of OTD modes used in "Machine Learning the Tangent Space of Dynamical Instabilities from Data" by Blanchard \& Sapsis (https://arxiv.org/abs/1907.10413)
 
 ## Background 
 
