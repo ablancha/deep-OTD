@@ -9,6 +9,6 @@ The optimally time-dependent (OTD) modes are a set of deformable orthonormal tan
 ## File description
 
 * [./3dim/](3dim/) contains files for the three-dimensional nonlinear system
-* [./cdv/](cdv/) contains files for the Charney--DeVore system
+* [./cdv/](cdv/) contains files for the Charney-DeVore system
 
 Send comments and questions to ablancha@mit.edu
