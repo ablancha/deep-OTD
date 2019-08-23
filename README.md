@@ -9,8 +9,8 @@ The optimally time-dependent (OTD) modes are a set of deformable orthonormal tan
 ## File description
 
 * [src/](src/) contains source code for data generation and dOTD learning
-* [examples/3dim/](examples/3dim/) contains files for the three-dimensional nonlinear system (run with main.py, plot with plt\*.m)
-* [examples/cdv/](examples/cdv/) contains files for the Charney-DeVore system (run with main.py, plot with plt\*.m)
+* [examples/3dim/](examples/3dim/) contains files for the three-dimensional nonlinear system
+* [examples/cdv/](examples/cdv/) contains files for the Charney-DeVore system 
 
 
 ## Dependencies
@@ -18,6 +18,5 @@ The optimally time-dependent (OTD) modes are a set of deformable orthonormal tan
 * [autograd](https://github.com/HIPS/autograd)
 * [numpy](http://www.numpy.org/)
 * [scikit-learn](http://scikit-learn.org/stable/index.html)
-* [MATLAB](https://www.mathworks.com) (only for reproducing figures)
 
 Send comments and questions to ablancha@mit.edu
