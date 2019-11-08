@@ -1,6 +1,6 @@
 # deep-OTD
 
-Source code for data-driven learning of OTD modes used in "Machine Learning the Tangent Space of Dynamical Instabilities from Data" by Blanchard \& Sapsis (https://arxiv.org/abs/1907.10413)
+Source code for data-driven learning of OTD modes used in "Learning the Tangent Space of Dynamical Instabilities from Data" by Blanchard \& Sapsis (https://arxiv.org/abs/1907.10413)
 
 ## Background 
 
@@ -16,7 +16,8 @@ The optimally time-dependent (OTD) modes are a set of deformable orthonormal tan
 ## Dependencies
 
 * [autograd](https://github.com/HIPS/autograd)
-* [numpy](http://www.numpy.org/)
 * [scikit-learn](http://scikit-learn.org/stable/index.html)
+* [numpy](http://www.numpy.org/)
+* [matplotlib](https://matplotlib.org)
 
 Send comments and questions to ablancha@mit.edu
