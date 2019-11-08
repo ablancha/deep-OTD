@@ -12,9 +12,12 @@ class GenData:
         self.rhs = rhs
 
 
-    def trajectory(self):
+    def trajectory(self, verbose=True):
         """Generate long trajectory using Adams-Bashforth time-stepping.""" 
-        print('Generating long trajectory...')
+
+        if verbose:
+            print('Generating long trajectory...')
+
         z = self.z0
         u = self.u0
         ndim = z.shape[0] 
@@ -55,7 +58,7 @@ class GenData:
         return t, Z, U
 
 
-    def gram_schmidt(self,A):
+    def gram_schmidt(self, A):
         """Gram-Schmidt orthonormalization based on Gil Strang's book."""
         m, n = A.shape
         Q = np.zeros((m, n))
@@ -81,20 +84,26 @@ class GenData:
         return phi
 
 
-    def dataset(self, t, Z, ind_trn, rec=False, n_neighbors=60):
-        """Form training set by sampling long trajectory and reconstruct F(x) and L(x).""" 
-        print('Generating dataset...')
+    def dataset(self, t, Z, ind_trn, rec=False, n_neighbors=60, verbose=True):
+        """Form training set by sampling long trajectory and 
+        reconstruct F(x) and L(x).""" 
+
+        if verbose:
+            print('Generating dataset...')
+
         ndim = Z.shape[1]
         FZ = np.zeros((len(ind_trn), ndim))
         LZ = np.zeros((len(ind_trn), ndim, ndim))
 
         if rec:
         # Reconstruct F(x) and L(x) using K-NN
-            print('Computing K-NN...')
+            if verbose:
+                print('Computing K-NN...')
             FZ = (Z[ind_trn+1,:]-Z[ind_trn,:])/self.dt
             nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
                                     algorithm='ball_tree').fit(Z)
             distances, indices = nbrs.kneighbors()
+            indices[np.where(indices==Z.shape[0]-1)] = Z.shape[0]-2
             for ii, ind in enumerate(ind_trn):
                 v0 = Z[indices[ind,:]  ,:] - Z[ind  ,:]; v0=v0.T
                 v1 = Z[indices[ind,:]+1,:] - Z[ind+1,:]; v1=v1.T
